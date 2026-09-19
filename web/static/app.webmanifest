@@ -1,0 +1,57 @@
+{
+  "id": "/",
+  "name": "swissPaste",
+  "short_name": "swissPaste",
+  "description": "Text und Dateien zwischen Geräten teilen. Ohne Konto, mit zeitlich begrenzten Sessions. Eine Verbindung zum Server ist erforderlich.",
+  "lang": "de-CH",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f7f5",
+  "theme_color": "#f7f7f5",
+  "categories": ["productivity", "utilities"],
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "/static/img/previews/desktop.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "swissPaste am Desktop - Session erstellen oder beitreten"
+    },
+    {
+      "src": "/static/img/previews/mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "swissPaste am Smartphone - Text und Dateien teilen"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/static/img/logo/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/img/logo/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/img/logo/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/img/logo/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

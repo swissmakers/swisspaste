@@ -1,0 +1,196 @@
+{
+  "images": [
+    {
+      "id": "0dedbaa5d0d5b856a492a36e",
+      "source": "austin-distel-TluMvvrZ57g-unsplash.jpg",
+      "variants": [
+        {
+          "url": "/static/img/bg_live/567dc41b164bb66b73382e87-960.webp",
+          "width": 960,
+          "height": 612,
+          "bytes": 37460
+        },
+        {
+          "url": "/static/img/bg_live/6adcd40f905dac84c90dc202-1920.webp",
+          "width": 1920,
+          "height": 1224,
+          "bytes": 214058
+        },
+        {
+          "url": "/static/img/bg_live/6ae712935597dd9da294a01c-2560.webp",
+          "width": 2560,
+          "height": 1632,
+          "bytes": 713710
+        }
+      ]
+    },
+    {
+      "id": "91c8c2e6f9b94d1a2e3b84ba",
+      "source": "bench-accounting-C3V88BOoRoM-unsplash.jpg",
+      "variants": [
+        {
+          "url": "/static/img/bg_live/1a7fe59f07a1196ff40e22fe-960.webp",
+          "width": 960,
+          "height": 641,
+          "bytes": 35772
+        },
+        {
+          "url": "/static/img/bg_live/1efffcdd575d769e73aea93d-1920.webp",
+          "width": 1920,
+          "height": 1283,
+          "bytes": 99604
+        },
+        {
+          "url": "/static/img/bg_live/16dada46f9efc3c506fce21c-2560.webp",
+          "width": 2560,
+          "height": 1710,
+          "bytes": 158742
+        }
+      ]
+    },
+    {
+      "id": "91d3b60c809b2865388b3bb0",
+      "source": "craig-mckay-vJwzxQK7FaE-unsplash.jpg",
+      "variants": [
+        {
+          "url": "/static/img/bg_live/42e7b32a5356e30cf345bc9b-960.webp",
+          "width": 960,
+          "height": 640,
+          "bytes": 70430
+        },
+        {
+          "url": "/static/img/bg_live/ed0bd289501c516c58802489-1920.webp",
+          "width": 1920,
+          "height": 1280,
+          "bytes": 268756
+        },
+        {
+          "url": "/static/img/bg_live/1620a61770e5d7609e32993c-2560.webp",
+          "width": 2560,
+          "height": 1707,
+          "bytes": 496564
+        }
+      ]
+    },
+    {
+      "id": "575ee362f6d5eed418a2e22c",
+      "source": "damian-markutt-GGHFVJ8eoqE-unsplash.jpg",
+      "variants": [
+        {
+          "url": "/static/img/bg_live/4db48c479c63ab26024816bd-960.webp",
+          "width": 960,
+          "height": 640,
+          "bytes": 112172
+        },
+        {
+          "url": "/static/img/bg_live/e68133832191f1004a3675c1-1920.webp",
+          "width": 1920,
+          "height": 1280,
+          "bytes": 551092
+        },
+        {
+          "url": "/static/img/bg_live/526cc8ce1b729e29bd1b993b-2560.webp",
+          "width": 2560,
+          "height": 1707,
+          "bytes": 1116492
+        }
+      ]
+    },
+    {
+      "id": "2330c635d22e520e355f9d7f",
+      "source": "damian-markutt-vaG8rOJLDHo-unsplash.jpg",
+      "variants": [
+        {
+          "url": "/static/img/bg_live/ba5d9a29fc288c5d1069f89a-960.webp",
+          "width": 960,
+          "height": 640,
+          "bytes": 56426
+        },
+        {
+          "url": "/static/img/bg_live/bd1363de19a75d5c95f63657-1920.webp",
+          "width": 1920,
+          "height": 1280,
+          "bytes": 212514
+        },
+        {
+          "url": "/static/img/bg_live/f3e47743ee81a4fab13e23f9-2560.webp",
+          "width": 2560,
+          "height": 1707,
+          "bytes": 447634
+        }
+      ]
+    },
+    {
+      "id": "77caafb5f32523d9f9c76843",
+      "source": "daniel-sessler-2h5ezBFW5Rw-unsplash.jpg",
+      "variants": [
+        {
+          "url": "/static/img/bg_live/20d15a195cf95c3dcea01edc-960.webp",
+          "width": 960,
+          "height": 641,
+          "bytes": 14248
+        },
+        {
+          "url": "/static/img/bg_live/15e60ce34f53453d797f66d1-1920.webp",
+          "width": 1920,
+          "height": 1281,
+          "bytes": 42710
+        },
+        {
+          "url": "/static/img/bg_live/715929ad7ba48e8cae7375bb-2560.webp",
+          "width": 2560,
+          "height": 1709,
+          "bytes": 72368
+        }
+      ]
+    },
+    {
+      "id": "a039ace25cddd53f50f2730d",
+      "source": "farshad-rezvanian-Eelegt4hFNc-unsplash.jpg",
+      "variants": [
+        {
+          "url": "/static/img/bg_live/b744de90abe8e70c51c5ae4b-960.webp",
+          "width": 960,
+          "height": 640,
+          "bytes": 95888
+        },
+        {
+          "url": "/static/img/bg_live/fcdb578a381984b1b8275dba-1920.webp",
+          "width": 1920,
+          "height": 1280,
+          "bytes": 362106
+        },
+        {
+          "url": "/static/img/bg_live/b4e2a0b6e1f365e47f4abe5e-2560.webp",
+          "width": 2560,
+          "height": 1707,
+          "bytes": 644292
+        }
+      ]
+    },
+    {
+      "id": "801318ae9f96d69c62b9b3c9",
+      "source": "lucas-benjamin-wQLAGv4_OYs-unsplash.jpg",
+      "variants": [
+        {
+          "url": "/static/img/bg_live/725ab85e9b53a3214a31c052-960.webp",
+          "width": 960,
+          "height": 640,
+          "bytes": 72950
+        },
+        {
+          "url": "/static/img/bg_live/16f46dea066f1bd7b653625f-1920.webp",
+          "width": 1920,
+          "height": 1280,
+          "bytes": 192596
+        },
+        {
+          "url": "/static/img/bg_live/edec21ed882ffd89e9c867ec-2560.webp",
+          "width": 2560,
+          "height": 1707,
+          "bytes": 304240
+        }
+      ]
+    }
+  ]
+}

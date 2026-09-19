@@ -1,0 +1,41 @@
+# Copyright (C) 2025-2026 Swissmakers GmbH
+# Author: Michael André Reber
+# License: AGPL-3.0-or-later
+# https://github.com/swissmakers/swisspaste
+
+# Run swissPaste on loopback with an ephemeral spool
+
+services:
+  swisspaste:
+    build:
+      context: .
+      dockerfile: Containerfile
+    image: swisspaste:latest
+    container_name: swisspaste
+    restart: on-failure:3
+
+    ports:
+      - "127.0.0.1:3002:8080"
+
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+    tmpfs:
+      - /var/lib/swisspaste/spool:rw,size=4g,mode=1777,nodev,nosuid,noexec
+
+    environment:
+      SWISSPASTE_LISTEN: ":8080"
+      SWISSPASTE_DATA_DIR: /var/lib/swisspaste/spool
+      SWISSPASTE_MAX_UPLOAD_BYTES: 2GiB
+      SWISSPASTE_MAX_SESSION_BYTES: 4GiB
+      SWISSPASTE_MAX_TOTAL_BYTES: 4GiB
+      SWISSPASTE_FILE_TTL: 15m
+      SWISSPASTE_SESSION_TTL: 24h
+      # SWISSPASTE_ALLOWED_ORIGINS: https://paste.swissmakers.ch
+      # SWISSPASTE_PUBLIC_URL: https://paste.swissmakers.ch
+      # SWISSPASTE_TRUST_PROXY: "true"
+      # SWISSPASTE_PEER_INSIGHTS: "true"
+      # SWISSPASTE_GEOIP_URL: http://geo.internal.example.ch/json/

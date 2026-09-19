@@ -1,0 +1,43 @@
+# Copyright (C) 2025-2026 Swissmakers GmbH
+# Author: Michael André Reber
+# License: AGPL-3.0-or-later
+# https://github.com/swissmakers/swisspaste
+
+# Run the public instance through the system service manager
+
+[Unit]
+Description=swissPaste shared clipboard and file exchange
+Documentation=https://github.com/swissmakers/swisspaste
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=localhost/swisspaste:latest
+Pull=never
+ContainerName=swisspaste
+
+PublishPort=127.0.0.1:3002:8080
+
+Tmpfs=/var/lib/swisspaste/spool:rw,size=4g,mode=1777,nodev,nosuid,noexec
+
+ReadOnly=true
+NoNewPrivileges=true
+DropCapability=ALL
+
+Environment=SWISSPASTE_LISTEN=:8080
+Environment=SWISSPASTE_DATA_DIR=/var/lib/swisspaste/spool
+Environment=SWISSPASTE_MAX_UPLOAD_BYTES=2GiB
+Environment=SWISSPASTE_MAX_SESSION_BYTES=4GiB
+Environment=SWISSPASTE_MAX_TOTAL_BYTES=4GiB
+Environment=SWISSPASTE_FILE_TTL=15m
+Environment=SWISSPASTE_SESSION_TTL=24h
+Environment=SWISSPASTE_ALLOWED_ORIGINS=https://paste.swissmakers.ch
+Environment=SWISSPASTE_PUBLIC_URL=https://paste.swissmakers.ch
+
+[Service]
+Restart=always
+RestartSec=3
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target
