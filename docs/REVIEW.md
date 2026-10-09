@@ -31,7 +31,7 @@ Deletion releases application resources but does not provide forensic erasure. H
 
 ## Browser and participant privacy
 
-Sensitive responses use `Cache-Control: no-store`. Static browser assets are served by the application. Generated backgrounds use content-based filenames with immutable caching; the original photographs and logo are not served. Image generation removes source metadata.
+Sensitive responses use `Cache-Control: no-store`. Static browser assets are served by the application. Operator-supplied [custom CSS and JavaScript](CONFIGURATION.md#customization) run with full access to session content, and configured extra Content Security Policy sources can load scripts and receive requests. Generated backgrounds use content-based filenames with immutable caching; the original photographs and logo are not served. Image generation removes source metadata.
 
 The app does not register a service worker or keep an offline content cache. Installation uses a fixed home page URL without a session code. Proxy logs, browser history and diagnostic captures remain separate places where session URLs can appear.
 

@@ -39,3 +39,10 @@ services:
       # SWISSPASTE_TRUST_PROXY: "true"
       # SWISSPASTE_PEER_INSIGHTS: "true"
       # SWISSPASTE_GEOIP_URL: http://geo.internal.example.ch/json/
+      # SWISSPASTE_CUSTOM_CSS: ".brand { filter: hue-rotate(90deg); }"
+      # SWISSPASTE_CUSTOM_JS_FILE: /etc/swisspaste/custom.js
+      # SWISSPASTE_CSP_EXTRA_SOURCES: https://stats.example.ch
+
+    # Mount longer custom assets read-only for the *_FILE variables
+    # volumes:
+    #   - ./custom/custom.js:/etc/swisspaste/custom.js:ro,Z

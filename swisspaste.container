@@ -33,6 +33,10 @@ Environment=SWISSPASTE_FILE_TTL=15m
 Environment=SWISSPASTE_SESSION_TTL=24h
 Environment=SWISSPASTE_ALLOWED_ORIGINS=https://paste.swissmakers.ch
 Environment=SWISSPASTE_PUBLIC_URL=https://paste.swissmakers.ch
+# Volume=/etc/swisspaste/custom.css:/etc/swisspaste/custom.css:ro,Z
+# Environment=SWISSPASTE_CUSTOM_CSS_FILE=/etc/swisspaste/custom.css
+# Environment=SWISSPASTE_CUSTOM_JS_FILE=/etc/swisspaste/custom.js
+# Environment=SWISSPASTE_CSP_EXTRA_SOURCES=https://stats.example.ch
 
 [Service]
 Restart=always

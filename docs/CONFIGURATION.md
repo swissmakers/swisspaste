@@ -67,6 +67,22 @@ With participant details disabled, the interface exposes only a connected device
 
 GeoIP lookup requires both participant details and a configured endpoint. The provider receives the participant IP address. Private and loopback addresses are not queried. The accepted JSON fields are defined in the [GeoIP resolver](../internal/geoip/geoip.go).
 
+## Customization
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `SWISSPASTE_CUSTOM_CSS` | Empty | Stylesheet served at `/custom.css` and loaded after the application stylesheet, so its rules can override the defaults. |
+| `SWISSPASTE_CUSTOM_CSS_FILE` | Empty | File read once at startup as the custom stylesheet. Cannot be combined with `SWISSPASTE_CUSTOM_CSS`. |
+| `SWISSPASTE_CUSTOM_JS` | Empty | Script served at `/custom.js` and loaded with `defer` after the application script. |
+| `SWISSPASTE_CUSTOM_JS_FILE` | Empty | File read once at startup as the custom script. Cannot be combined with `SWISSPASTE_CUSTOM_JS`. |
+| `SWISSPASTE_CSP_EXTRA_SOURCES` | Empty | Comma-separated HTTP or HTTPS origins added to the `script-src`, `style-src`, `img-src`, `font-src` and `connect-src` directives of the Content Security Policy. |
+
+Empty values leave the page unchanged and `/custom.css` and `/custom.js` return `404`. Custom code must be valid UTF-8 and at most 1 MiB per asset. A missing or unreadable file stops startup. Use the file variants for longer code; the container's root file system is read-only, so mount the file, for example `./custom/custom.css:/etc/swisspaste/custom.css:ro,Z`, and point the variable at the mounted path. Changes apply after the container is recreated or the service restarted.
+
+The custom assets are same-origin files, so the default Content Security Policy remains unchanged. Without extra sources, custom code can restyle and script the page but cannot load fonts, images or scripts from other hosts or send requests to them. Extra sources accept complete origins only, such as `https://cdn.example.ch`. Paths, wildcards, quotes, keywords such as `'unsafe-inline'` and schemes such as `data:` are rejected at startup.
+
+Custom JavaScript runs with the same privileges as the application. It can read shared text, files, previews and session codes in every participant's browser. Only deploy code you trust. Each extra source can receive data through `connect-src` and serve scripts through `script-src`, so keep the list as short as possible.
+
 ## Fixed limits
 
 These safeguards are defined in the server and cannot be changed through environment variables.
