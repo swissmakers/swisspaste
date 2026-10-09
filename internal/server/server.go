@@ -43,6 +43,8 @@ type Server struct {
 	mgr         *session.Manager
 	log         *slog.Logger
 	index       []byte
+	csp         string
+	startedAt   time.Time
 	staticFS    fs.FS
 	upgrader    websocket.Upgrader
 	geo         geoip.Resolver
@@ -68,7 +70,14 @@ func New(cfg *config.Config, mgr *session.Manager, log *slog.Logger, index []byt
 			`<meta name="twitter:image" content="` + preview + `" />` +
 			`<meta name="twitter:image:alt" content="swissPaste shared clipboard" />`
 	}
-	page := strings.NewReplacer("{{VERSION}}", html.EscapeString(version), "{{PUBLIC_META}}", publicMeta).Replace(string(index))
+	customCSS, customJS := "", ""
+	if cfg.CustomCSS != "" {
+		customCSS = `<link rel="stylesheet" href="/custom.css" />`
+	}
+	if cfg.CustomJS != "" {
+		customJS = `<script defer src="/custom.js"></script>`
+	}
+	page := strings.NewReplacer("{{VERSION}}", html.EscapeString(version), "{{PUBLIC_META}}", publicMeta, "{{CUSTOM_CSS}}", customCSS, "{{CUSTOM_JS}}", customJS).Replace(string(index))
 	s := &Server{
 		cfg:         cfg,
 		uploads:     make(chan struct{}, 8),
@@ -76,6 +85,8 @@ func New(cfg *config.Config, mgr *session.Manager, log *slog.Logger, index []byt
 		mgr:         mgr,
 		log:         log,
 		index:       []byte(page),
+		csp:         buildCSP(cfg.CSPExtraSources),
+		startedAt:   time.Now(),
 		version:     version,
 		license:     license,
 		updates:     release.New(version),
@@ -124,6 +135,12 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET /ws/{code}", s.handleWS)
 
 	mux.Handle("GET /static/", s.staticHandler())
+	if s.cfg.CustomCSS != "" {
+		mux.HandleFunc("GET /custom.css", s.serveCustom(s.cfg.CustomCSS, "text/css; charset=utf-8"))
+	}
+	if s.cfg.CustomJS != "" {
+		mux.HandleFunc("GET /custom.js", s.serveCustom(s.cfg.CustomJS, "text/javascript; charset=utf-8"))
+	}
 	mux.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/static/img/logo/favicon.ico", http.StatusTemporaryRedirect)
 	})
@@ -131,22 +148,30 @@ func (s *Server) Handler() http.Handler {
 	return s.securityHeaders(mux)
 }
 
-func (s *Server) securityHeaders(next http.Handler) http.Handler {
-	const csp = "default-src 'self'; " +
-		"script-src 'self'; " +
-		"style-src 'self' 'unsafe-inline'; " +
-		"img-src 'self' data: blob:; " +
+// Appends operator-approved origins to the directives custom assets may need
+func buildCSP(extra []string) string {
+	add := ""
+	if len(extra) > 0 {
+		add = " " + strings.Join(extra, " ")
+	}
+	return "default-src 'self'; " +
+		"script-src 'self'" + add + "; " +
+		"style-src 'self' 'unsafe-inline'" + add + "; " +
+		"img-src 'self' data: blob:" + add + "; " +
 		"media-src blob:; " +
 		"worker-src 'self'; " +
-		"font-src 'self'; " +
-		"connect-src 'self'; " +
+		"font-src 'self'" + add + "; " +
+		"connect-src 'self'" + add + "; " +
 		"object-src 'none'; " +
 		"base-uri 'none'; " +
 		"form-action 'self'; " +
 		"frame-ancestors 'none'"
+}
+
+func (s *Server) securityHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		h := w.Header()
-		h.Set("Content-Security-Policy", csp)
+		h.Set("Content-Security-Policy", s.csp)
 		h.Set("X-Content-Type-Options", "nosniff")
 		h.Set("X-Frame-Options", "DENY")
 		h.Set("Referrer-Policy", "no-referrer")
@@ -291,6 +316,14 @@ func (s *Server) staticHandler() http.Handler {
 		}
 		fileServer.ServeHTTP(w, r)
 	})
+}
+
+func (s *Server) serveCustom(body, contentType string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", contentType)
+		w.Header().Set("Cache-Control", "no-cache")
+		http.ServeContent(w, r, "", s.startedAt, strings.NewReader(body))
+	}
 }
 
 func (s *Server) handleCreate(w http.ResponseWriter, r *http.Request) {

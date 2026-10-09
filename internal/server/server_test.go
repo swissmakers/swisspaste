@@ -319,3 +319,54 @@ func TestInstallationMetadataAndGeneratedAssetCaching(t *testing.T) {
 		t.Fatalf("invalid favicon redirect %+v", w)
 	}
 }
+func TestCustomAssetsAndCSPSources(t *testing.T) {
+	s, _ := fixture(t)
+	page := []byte(`<head>{{CUSTOM_CSS}}</head><body>{{CUSTOM_JS}}</body>`)
+	get := func(app *Server, path string) *httptest.ResponseRecorder {
+		w := httptest.NewRecorder()
+		app.Handler().ServeHTTP(w, httptest.NewRequest("GET", path, nil))
+		return w
+	}
+
+	plain := New(s.cfg, s.mgr, s.log, page, s.staticFS, "1.0.0", nil)
+	w := get(plain, "/")
+	if body := w.Body.String(); body != `<head></head><body></body>` {
+		t.Fatalf("unconfigured placeholders rendered %q", body)
+	}
+	if csp := w.Header().Get("Content-Security-Policy"); !strings.Contains(csp, "script-src 'self'; ") || !strings.Contains(csp, "connect-src 'self'; ") {
+		t.Fatalf("default CSP changed: %s", csp)
+	}
+	for _, path := range []string{"/custom.css", "/custom.js"} {
+		if code := get(plain, path).Code; code != http.StatusNotFound {
+			t.Fatalf("unconfigured %s served: %d", path, code)
+		}
+	}
+
+	cfg := *s.cfg
+	cfg.CustomCSS = "body{color:red}"
+	cfg.CustomJS = `console.log("custom")`
+	cfg.CSPExtraSources = []string{"https://cdn.example.ch", "https://stats.example.ch"}
+	custom := New(&cfg, s.mgr, s.log, page, s.staticFS, "1.0.0", nil)
+	w = get(custom, "/")
+	if body := w.Body.String(); !strings.Contains(body, `<link rel="stylesheet" href="/custom.css" />`) || !strings.Contains(body, `<script defer src="/custom.js"></script>`) {
+		t.Fatalf("custom tags missing: %q", body)
+	}
+	csp := w.Header().Get("Content-Security-Policy")
+	for _, directive := range []string{"script-src", "style-src", "img-src", "font-src", "connect-src"} {
+		if !strings.Contains(csp, "https://cdn.example.ch https://stats.example.ch; ") || !strings.Contains(csp, directive) {
+			t.Fatalf("extra sources missing from %s: %s", directive, csp)
+		}
+	}
+	if !strings.Contains(csp, "connect-src 'self' https://cdn.example.ch https://stats.example.ch;") || !strings.Contains(csp, "frame-ancestors 'none'") || strings.Contains(csp, "object-src 'none' https") {
+		t.Fatalf("unexpected CSP: %s", csp)
+	}
+	for path, want := range map[string][2]string{
+		"/custom.css": {"text/css; charset=utf-8", cfg.CustomCSS},
+		"/custom.js":  {"text/javascript; charset=utf-8", cfg.CustomJS},
+	} {
+		w := get(custom, path)
+		if w.Code != http.StatusOK || w.Header().Get("Content-Type") != want[0] || w.Body.String() != want[1] || w.Header().Get("Cache-Control") != "no-cache" {
+			t.Fatalf("%s: %d %q %q", path, w.Code, w.Header().Get("Content-Type"), w.Body.String())
+		}
+	}
+}
