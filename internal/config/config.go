@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 type Config struct {
@@ -36,6 +37,9 @@ type Config struct {
 	TrustForwardedHeaders bool
 	PeerInsights          bool
 	GeoIPURL              string
+	CustomCSS             string
+	CustomJS              string
+	CSPExtraSources       []string
 }
 
 func Load() (*Config, error) {
@@ -90,6 +94,14 @@ func Load() (*Config, error) {
 		TrustForwardedHeaders: envBool("SWISSPASTE_TRUST_PROXY", false),
 		PeerInsights:          envBool("SWISSPASTE_PEER_INSIGHTS", false),
 		GeoIPURL:              env("SWISSPASTE_GEOIP_URL", ""),
+		CSPExtraSources:       envList("SWISSPASTE_CSP_EXTRA_SOURCES"),
+	}
+	var err error
+	if c.CustomCSS, err = envAsset("SWISSPASTE_CUSTOM_CSS"); err != nil {
+		return nil, err
+	}
+	if c.CustomJS, err = envAsset("SWISSPASTE_CUSTOM_JS"); err != nil {
+		return nil, err
 	}
 
 	if c.PublicURL != "" {
@@ -117,6 +129,12 @@ func Load() (*Config, error) {
 			return nil, fmt.Errorf("SWISSPASTE_ALLOWED_ORIGINS must contain complete HTTP(S) origins without paths")
 		}
 	}
+	for _, source := range c.CSPExtraSources {
+		u, err := url.Parse(source)
+		if strings.ContainsAny(source, ";,'\" \t\r\n") || err != nil || (u.Scheme != "https" && u.Scheme != "http") || u.Host == "" || u.User != nil || u.Path != "" || u.RawQuery != "" || u.ForceQuery || u.Fragment != "" {
+			return nil, fmt.Errorf("SWISSPASTE_CSP_EXTRA_SOURCES must contain complete HTTP(S) origins without paths")
+		}
+	}
 	if c.GeoIPURL != "" {
 		u, err := url.Parse(strings.ReplaceAll(c.GeoIPURL, "{ip}", "8.8.8.8"))
 		if err != nil || (u.Scheme != "https" && u.Scheme != "http") || u.Host == "" || u.User != nil {
@@ -131,6 +149,29 @@ func env(key, def string) string {
 		return v
 	}
 	return def
+}
+
+// Reads inline content from key or a file named by key_FILE, never both
+func envAsset(key string) (string, error) {
+	const maxAssetBytes = 1 << 20
+	inline, path := os.Getenv(key), os.Getenv(key+"_FILE")
+	if inline != "" && path != "" {
+		return "", fmt.Errorf("%s and %s_FILE must not be set together", key, key)
+	}
+	if path != "" {
+		b, err := os.ReadFile(path)
+		if err != nil {
+			return "", fmt.Errorf("%s_FILE: %w", key, err)
+		}
+		inline = string(b)
+	}
+	if len(inline) > maxAssetBytes {
+		return "", fmt.Errorf("%s must not exceed 1MiB", key)
+	}
+	if !utf8.ValidString(inline) {
+		return "", fmt.Errorf("%s must be valid UTF-8", key)
+	}
+	return inline, nil
 }
 
 func envBool(key string, def bool) bool {
